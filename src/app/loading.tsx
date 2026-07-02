@@ -1,17 +1,16 @@
 import { Container } from "@/components/ui/container"
-import { Text } from "@/components/ui/typography"
 
 export default function Loading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
+    <div className="flex min-h-[70vh] items-center justify-center">
       <Container>
-        <div className="text-center space-y-4">
-          <div className="animate-pulse">
-            <Text variant="h6">Loading</Text>
-          </div>
-          <div className="flex justify-center">
-            <div className="w-16 h-px bg-border animate-pulse"></div>
-          </div>
+        <div className="flex flex-col items-center gap-4">
+          <span className="spin-slow flex h-12 w-12 items-center justify-center rounded-full border-2 border-dashed border-ink text-lg">
+            ✦
+          </span>
+          <span className="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
+            Loading
+          </span>
         </div>
       </Container>
     </div>

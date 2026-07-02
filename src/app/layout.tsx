@@ -1,32 +1,57 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Navigation } from "@/components/navigation";
-import { Footer } from "@/components/footer";
-import { StructuredData } from "@/components/structured-data";
+import type { Metadata } from "next"
+import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google"
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Navigation } from "@/components/navigation"
+import { Footer } from "@/components/footer"
+import { StructuredData } from "@/components/structured-data"
+import { MotionProvider } from "@/components/motion/motion-provider"
+import { profile } from "@/data/profile"
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
-  title: "Anant Kumar Iyer - Full Stack Developer & Designer",
-  description: "Portfolio of Anant Kumar Iyer, a passionate full-stack developer specializing in modern web technologies, React, Next.js, and creating exceptional user experiences.",
-  keywords: ["Anant Kumar Iyer", "Full Stack Developer", "React", "Next.js", "TypeScript", "Portfolio", "Web Developer"],
-  authors: [{ name: "Anant Kumar Iyer" }],
-  creator: "Anant Kumar Iyer",
+  title: `${profile.name} - ${profile.title}`,
+  description: profile.tagline,
+  keywords: [
+    profile.name,
+    profile.title,
+    "React",
+    "Next.js",
+    "TypeScript",
+    "Full Stack Developer",
+    "Portfolio",
+  ],
+  authors: [{ name: profile.name }],
+  creator: profile.name,
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "en_IN",
     url: "https://anantkiyer.github.io",
-    title: "Anant Kumar Iyer - Full Stack Developer & Designer",
-    description: "Portfolio of Anant Kumar Iyer, a passionate full-stack developer specializing in modern web technologies.",
-    siteName: "Anant Kumar Iyer Portfolio",
+    title: `${profile.name} - ${profile.title}`,
+    description: profile.tagline,
+    siteName: `${profile.name} Portfolio`,
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anant Kumar Iyer - Full Stack Developer & Designer",
-    description: "Portfolio of Anant Kumar Iyer, a passionate full-stack developer specializing in modern web technologies.",
-    creator: "@anantkiyer",
+    title: `${profile.name} - ${profile.title}`,
+    description: profile.tagline,
   },
   robots: {
     index: true,
@@ -39,32 +64,34 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body
+        className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+      >
         <StructuredData />
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
-                  <div className="min-h-screen flex flex-col">
-                    <Navigation />
-                    <main className="flex-1">
-                      {children}
-                    </main>
-                    <Footer />
-                  </div>
+          <MotionProvider>
+            <div className="relative flex min-h-screen flex-col">
+              <Navigation />
+              <main className="flex-1">{children}</main>
+              <Footer />
+            </div>
+          </MotionProvider>
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

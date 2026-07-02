@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { getProjectById } from "@/data/projects"
 import { ProjectDetail } from "@/components/modules/project-detail"
+import { PageTransition } from "@/components/motion/page-transition"
 
 interface ProjectPageProps {
   params: {
@@ -22,5 +23,9 @@ export default function ProjectPage({ params }: ProjectPageProps) {
     notFound()
   }
 
-  return <ProjectDetail project={project} />
+  return (
+    <PageTransition>
+      <ProjectDetail project={project} />
+    </PageTransition>
+  )
 }

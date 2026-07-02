@@ -4,38 +4,22 @@ import Link from "next/link"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { Heading, Text } from "@/components/ui/typography"
-import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 
 export default function NotFound() {
   return (
-    <Section spacing="xl" className="min-h-screen flex items-center">
-      <Container>
-        <div className="text-center space-y-8 max-w-md mx-auto">
-          <div className="space-y-4">
-            <Heading variant="h1" className="text-6xl">404</Heading>
-            <Text variant="h6">Page Not Found</Text>
-            <Text variant="body" className="text-muted-foreground">
-              The page you&apos;re looking for doesn&apos;t exist.
-            </Text>
-          </div>
-
-          <Card variant="outlined" padding="lg">
-            <div className="space-y-4">
-              <Link 
-                href="/" 
-                className="text-sm font-mono hover:text-muted-foreground transition-colors block"
-              >
-                Go Home
-              </Link>
-              <button 
-                onClick={() => window.history.back()}
-                className="text-sm font-mono hover:text-muted-foreground transition-colors"
-              >
-                Go Back
-              </button>
-            </div>
-          </Card>
-        </div>
+    <Section spacing="lg" className="flex min-h-[80vh] items-center pt-28">
+      <Container className="text-center">
+        <span className="wobble inline-block text-7xl md:text-9xl">🧭</span>
+        <Heading variant="display" className="mt-6 text-[clamp(3rem,12vw,9rem)]">
+          404
+        </Heading>
+        <Text variant="body" className="mx-auto mt-4 max-w-sm text-muted-foreground">
+          This page wandered off. Let&apos;s get you back on track.
+        </Text>
+        <Button variant="accent" size="lg" asChild className="mt-8">
+          <Link href="/">Take me home</Link>
+        </Button>
       </Container>
     </Section>
   )

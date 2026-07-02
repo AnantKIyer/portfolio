@@ -8,24 +8,26 @@ interface ContainerProps {
 }
 
 const sizeClasses = {
-  sm: "max-w-2xl",
-  md: "max-w-4xl", 
+  sm: "max-w-3xl",
+  md: "max-w-5xl",
   lg: "max-w-6xl",
-  xl: "max-w-7xl",
-  full: "max-w-none"
+  xl: "max-w-[1500px]",
+  full: "max-w-none",
 }
 
-export function Container({ 
-  children, 
-  className, 
-  size = "md" 
+export function Container({
+  children,
+  className,
+  size = "xl",
 }: ContainerProps) {
   return (
-    <div className={cn(
-      "mx-auto px-6 lg:px-8",
-      sizeClasses[size],
-      className
-    )}>
+    <div
+      className={cn(
+        "mx-auto w-full px-5 sm:px-8 lg:px-12",
+        sizeClasses[size],
+        className,
+      )}
+    >
       {children}
     </div>
   )

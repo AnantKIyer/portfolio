@@ -8,50 +8,46 @@ interface TypographyProps {
 }
 
 const variants = {
-  h1: "text-4xl md:text-5xl lg:text-6xl font-mono font-medium tracking-tight",
-  h2: "text-3xl md:text-4xl lg:text-5xl font-mono font-medium tracking-tight", 
-  h3: "text-2xl md:text-3xl lg:text-4xl font-mono font-medium",
-  h4: "text-xl md:text-2xl lg:text-3xl font-mono font-medium",
-  h5: "text-lg md:text-xl lg:text-2xl font-mono font-medium",
-  h6: "text-base md:text-lg lg:text-xl font-mono font-medium",
-  body: "text-sm md:text-base font-mono leading-relaxed",
-  small: "text-xs md:text-sm font-mono",
-  caption: "text-xs font-mono text-muted-foreground uppercase tracking-wider"
+  display:
+    "font-display font-bold tracking-tight leading-[0.92] text-[clamp(3rem,10vw,9rem)]",
+  h1: "font-display font-bold tracking-tight leading-[1.02] text-[clamp(2.25rem,5vw,4rem)]",
+  h2: "font-display font-bold tracking-tight leading-[1.05] text-[clamp(1.75rem,3.5vw,2.75rem)]",
+  h3: "font-display font-semibold tracking-tight text-[clamp(1.375rem,2.2vw,1.875rem)]",
+  h4: "font-display font-semibold tracking-tight text-xl md:text-2xl",
+  h5: "font-display font-semibold text-lg md:text-xl",
+  h6: "font-semibold text-base md:text-lg",
+  body: "text-[15px] md:text-base leading-relaxed",
+  small: "text-xs md:text-sm leading-relaxed",
+  caption:
+    "font-mono text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground",
+  label: "text-xs font-medium text-muted-foreground",
 }
 
-export function Heading({ 
-  children, 
-  className, 
+export function Heading({
+  children,
+  className,
   as: Component = "h1",
-  variant = "h1"
+  variant = "h1",
 }: TypographyProps & { variant?: keyof typeof variants }) {
   return (
-    <Component className={cn(variants[variant], className)}>
-      {children}
-    </Component>
+    <Component className={cn(variants[variant], className)}>{children}</Component>
   )
 }
 
-export function Text({ 
-  children, 
-  className, 
+export function Text({
+  children,
+  className,
   as: Component = "p",
-  variant = "body"
+  variant = "body",
 }: TypographyProps & { variant?: keyof typeof variants }) {
   return (
-    <Component className={cn(variants[variant], className)}>
-      {children}
-    </Component>
+    <Component className={cn(variants[variant], className)}>{children}</Component>
   )
 }
 
-export function Caption({ 
-  children, 
-  className 
+export function Caption({
+  children,
+  className,
 }: Omit<TypographyProps, "as">) {
-  return (
-    <span className={cn(variants.caption, className)}>
-      {children}
-    </span>
-  )
+  return <span className={cn(variants.caption, className)}>{children}</span>
 }

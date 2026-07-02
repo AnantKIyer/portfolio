@@ -1,41 +1,33 @@
 import Script from "next/script"
+import { education, profile, skillCategories } from "@/data/profile"
 
 export function StructuredData() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "Person",
-        "name": "Anant Kumar Iyer",
-    "jobTitle": "Full Stack Developer & Designer",
-    "description": "Passionate full-stack developer specializing in modern web technologies, React, Next.js, and creating exceptional user experiences.",
-    "url": "https://anantkiyer.github.io",
-    "image": "https://anantkiyer.github.io/api/placeholder/400/400",
-    "sameAs": [
-      "https://github.com/anantkumariyer",
-      "https://linkedin.com/in/anantkumariyer",
-      "https://twitter.com/anantkumariyer"
-    ],
-    "knowsAbout": [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Node.js",
-      "Full Stack Development",
-      "UI/UX Design",
-      "Web Development"
-    ],
-    "alumniOf": "Computer Science",
-    "worksFor": {
+    name: profile.name,
+    jobTitle: profile.title,
+    description: profile.tagline,
+    url: "https://anantkiyer.github.io",
+    image: "https://anantkiyer.github.io/api/placeholder/400/400",
+    sameAs: [profile.links.github, profile.links.linkedin],
+    knowsAbout: skillCategories.flatMap((category) => category.skills),
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: education.school,
+    },
+    worksFor: {
       "@type": "Organization",
-      "name": "Freelance"
+      name: "Brahma AI",
     },
-    "address": {
+    address: {
       "@type": "PostalAddress",
-      "addressLocality": "San Francisco",
-      "addressRegion": "CA",
-      "addressCountry": "US"
+      addressLocality: "Bangalore",
+      addressRegion: "KA",
+      addressCountry: "IN",
     },
-    "email": "anant.kumar.iyer@example.com",
-    "telephone": "+1-555-123-4567"
+    email: profile.email,
+    telephone: profile.phone,
   }
 
   return (

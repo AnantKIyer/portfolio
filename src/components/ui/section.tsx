@@ -5,35 +5,25 @@ interface SectionProps {
   children: React.ReactNode
   className?: string
   spacing?: "none" | "sm" | "md" | "lg" | "xl"
-  background?: "default" | "muted" | "accent"
+  id?: string
 }
 
 const spacingClasses = {
   none: "",
-  sm: "py-8",
-  md: "py-16", 
-  lg: "py-24",
-  xl: "py-32"
+  sm: "py-12",
+  md: "py-16 md:py-24",
+  lg: "py-20 md:py-32",
+  xl: "py-24 md:py-40",
 }
 
-const backgroundClasses = {
-  default: "",
-  muted: "bg-muted/30",
-  accent: "bg-accent/10"
-}
-
-export function Section({ 
-  children, 
-  className, 
+export function Section({
+  children,
+  className,
   spacing = "md",
-  background = "default"
+  id,
 }: SectionProps) {
   return (
-    <section className={cn(
-      spacingClasses[spacing],
-      backgroundClasses[background],
-      className
-    )}>
+    <section id={id} className={cn(spacingClasses[spacing], className)}>
       {children}
     </section>
   )

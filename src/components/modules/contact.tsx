@@ -4,238 +4,213 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { ArrowUpRight, CheckCircle2, Download, Mail, MapPin, Phone } from "lucide-react"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
-import { Heading, Text, Caption } from "@/components/ui/typography"
-import { Grid } from "@/components/ui/grid"
+import { Heading, Text } from "@/components/ui/typography"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Badge, Dot } from "@/components/ui/badge"
+import { CopyButton } from "@/components/ui/copy-button"
+import { profile } from "@/data/profile"
+import { cn } from "@/lib/utils"
 
-const contactFormSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+const schema = z.object({
+  name: z.string().min(2, "Tell me your name"),
+  email: z.string().email("Need a valid email"),
+  subject: z.string().min(5, "A little more detail"),
+  message: z.string().min(10, "Say a bit more"),
 })
 
-type ContactFormValues = z.infer<typeof contactFormSchema>
+type FormValues = z.infer<typeof schema>
 
-const contactInfo = [
-  {
-    label: "Email",
-    value: "anant.k.iyer@outlook.com",
-    href: "mailto:anant.k.iyer@outlook.com"
-  },
-  {
-    label: "Location", 
-    value: "Bangalore, KA",
-    href: null
-  },
-]
+const inputClass =
+  "w-full rounded-2xl bg-muted/60 border border-border px-4 py-3.5 text-sm transition-colors focus:outline-none focus:border-accent focus:bg-card placeholder:text-muted-foreground/70"
 
-const socialLinks = [
-  { label: "GitHub", href: "https://github.com/AnantKIyer" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/anant-iyer" },
-  { label: "Twitter", href: "https://twitter.com/" }
+const directLinks = [
+  { icon: Mail, label: profile.email, href: `mailto:${profile.email}` },
+  {
+    icon: Phone,
+    label: profile.phone,
+    href: `tel:${profile.phone.replace(/\s/g, "")}`,
+  },
+  { icon: MapPin, label: profile.location, href: undefined },
 ]
 
 export function Contact() {
-  const [isSubmitting, setIsSubmitting] = React.useState(false)
-  const [isSubmitted, setIsSubmitted] = React.useState(false)
-
-  const form = useForm<ContactFormValues>({
-    resolver: zodResolver(contactFormSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
+  const [submitting, setSubmitting] = React.useState(false)
+  const [sent, setSent] = React.useState(false)
+  const form = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: { name: "", email: "", subject: "", message: "" },
   })
 
-  const onSubmit = async (data: ContactFormValues) => {
-    setIsSubmitting(true)
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000))
-    
-    console.log("Form submitted:", data)
-    setIsSubmitted(true)
-    setIsSubmitting(false)
+  async function onSubmit(data: FormValues) {
+    setSubmitting(true)
+    await new Promise((r) => setTimeout(r, 900))
+    console.log(data)
+    setSent(true)
+    setSubmitting(false)
     form.reset()
-    
-    // Reset success message after 5 seconds
-    setTimeout(() => setIsSubmitted(false), 5000)
+    setTimeout(() => setSent(false), 5000)
   }
 
+  const errors = form.formState.errors
+
   return (
-    <Section spacing="lg">
+    <Section spacing="lg" className="pt-28 md:pt-36" id="contact">
       <Container>
-        <div className="space-y-12">
-          <div className="text-center space-y-4">
-            <Caption>Get in Touch</Caption>
-            <Heading variant="h2">Contact</Heading>
-            <Text variant="body" className="text-muted-foreground max-w-2xl mx-auto">
-              Ready to start your next project? Let&apos;s discuss how we can work together 
-              to bring your ideas to life.
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
+          {/* Left — the pitch */}
+          <div className="flex flex-col">
+            <Badge tone="outline" className="w-fit py-1.5">
+              <Dot className="text-lime" />
+              Available for new work
+            </Badge>
+            <Heading variant="h1" className="mt-6">
+              Let&apos;s make
+              <br />
+              something{" "}
+              <span className="accent-underline text-accent">good</span>.
+            </Heading>
+            <Text variant="body" className="mt-6 max-w-md text-muted-foreground">
+              Have a role, a project, or just a wild idea? My inbox is open and I
+              reply within a day.
             </Text>
+
+            <div className="mt-10 space-y-3">
+              {directLinks.map((l) => {
+                const Inner = (
+                  <>
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-muted">
+                      <l.icon className="h-5 w-5" />
+                    </span>
+                    <span className="font-medium">{l.label}</span>
+                    {l.href && (
+                      <ArrowUpRight className="ml-auto h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+                    )}
+                  </>
+                )
+                return l.href ? (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    className="group flex items-center gap-4 rounded-2xl p-2 transition-colors hover:bg-muted/60"
+                  >
+                    {Inner}
+                  </a>
+                ) : (
+                  <div key={l.label} className="flex items-center gap-4 p-2">
+                    {Inner}
+                  </div>
+                )
+              })}
+            </div>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <CopyButton value={profile.email} label="Copy email" />
+              <a
+                href={profile.resumeUrl}
+                download
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-muted/60"
+              >
+                Résumé
+                <Download className="h-4 w-4" />
+              </a>
+            </div>
           </div>
 
-          <Grid cols={2} gap="lg">
-            {/* Contact Form */}
-            <div>
-              {isSubmitted ? (
-                <Card variant="outlined" padding="lg">
-                  <div className="text-center space-y-4">
-                    <Text variant="h6">Message Sent</Text>
-                    <Text variant="body" className="text-muted-foreground">
-                      Thank you for reaching out. I&apos;ll get back to you as soon as possible.
-                    </Text>
-                  </div>
-                </Card>
-              ) : (
-                <Card variant="outlined" padding="lg">
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="text-sm font-mono text-muted-foreground block mb-2">
-                          Name *
-                        </label>
-                        <input
-                          {...form.register("name")}
-                          className="w-full border border-border bg-transparent p-3 font-mono text-sm focus:outline-none focus:border-foreground transition-colors"
-                          placeholder="Your name"
-                        />
-                        {form.formState.errors.name && (
-                          <Text variant="small" className="text-red-500 mt-1">
-                            {form.formState.errors.name.message}
-                          </Text>
-                        )}
-                      </div>
-                      <div>
-                        <label className="text-sm font-mono text-muted-foreground block mb-2">
-                          Email *
-                        </label>
-                        <input
-                          type="email"
-                          {...form.register("email")}
-                          className="w-full border border-border bg-transparent p-3 font-mono text-sm focus:outline-none focus:border-foreground transition-colors"
-                          placeholder="your.email@example.com"
-                        />
-                        {form.formState.errors.email && (
-                          <Text variant="small" className="text-red-500 mt-1">
-                            {form.formState.errors.email.message}
-                          </Text>
-                        )}
-                      </div>
-                    </div>
-                    
+          {/* Right — form */}
+          <div>
+            {sent ? (
+              <Card
+                variant="elevated"
+                padding="lg"
+                className="flex min-h-[420px] flex-col items-center justify-center text-center"
+              >
+                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-lime text-ink">
+                  <CheckCircle2 className="h-8 w-8" />
+                </span>
+                <Heading variant="h4" className="mt-5">
+                  Message sent!
+                </Heading>
+                <Text variant="small" className="mt-2 text-muted-foreground">
+                  Thanks for reaching out — I&apos;ll be in touch shortly.
+                </Text>
+              </Card>
+            ) : (
+              <Card variant="elevated" padding="lg">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-4"
+                  noValidate
+                >
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <label className="text-sm font-mono text-muted-foreground block mb-2">
-                        Subject *
-                      </label>
                       <input
-                        {...form.register("subject")}
-                        className="w-full border border-border bg-transparent p-3 font-mono text-sm focus:outline-none focus:border-foreground transition-colors"
-                        placeholder="What's this about?"
+                        {...form.register("name")}
+                        placeholder="Your name"
+                        className={inputClass}
                       />
-                      {form.formState.errors.subject && (
-                        <Text variant="small" className="text-red-500 mt-1">
-                          {form.formState.errors.subject.message}
-                        </Text>
+                      {errors.name && (
+                        <p className="mt-1.5 text-xs text-destructive">
+                          {errors.name.message}
+                        </p>
                       )}
                     </div>
-                    
                     <div>
-                      <label className="text-sm font-mono text-muted-foreground block mb-2">
-                        Message *
-                      </label>
-                      <textarea
-                        rows={6}
-                        {...form.register("message")}
-                        className="w-full border border-border bg-transparent p-3 font-mono text-sm focus:outline-none focus:border-foreground transition-colors resize-none"
-                        placeholder="Tell me about your project or just say hello..."
+                      <input
+                        {...form.register("email")}
+                        type="email"
+                        placeholder="Email"
+                        className={inputClass}
                       />
-                      {form.formState.errors.message && (
-                        <Text variant="small" className="text-red-500 mt-1">
-                          {form.formState.errors.message.message}
-                        </Text>
+                      {errors.email && (
+                        <p className="mt-1.5 text-xs text-destructive">
+                          {errors.email.message}
+                        </p>
                       )}
                     </div>
-                    
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full border border-border p-3 font-mono text-sm hover:bg-muted/50 disabled:opacity-50 transition-colors"
-                    >
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                    </button>
-                  </form>
-                </Card>
-              )}
-            </div>
-
-            {/* Contact Information */}
-            <div className="space-y-6">
-              {/* Contact Details */}
-              <Card variant="outlined" padding="lg">
-                <div className="space-y-4">
-                  <Text variant="h6">Contact Info</Text>
-                  <div className="space-y-4">
-                    {contactInfo.map((info, index) => (
-                      <div key={index}>
-                        <Text variant="small" className="text-muted-foreground mb-1">
-                          {info.label}
-                        </Text>
-                        {info.href ? (
-                          <a
-                            href={info.href}
-                            className="text-sm font-mono hover:text-muted-foreground transition-colors"
-                          >
-                            {info.value}
-                          </a>
-                        ) : (
-                          <Text variant="small">{info.value}</Text>
-                        )}
-                      </div>
-                    ))}
                   </div>
-                </div>
-              </Card>
-
-              {/* Social Links */}
-              <Card variant="outlined" padding="lg">
-                <div className="space-y-4">
-                  <Text variant="h6">Social</Text>
-                  <div className="space-y-2">
-                    {socialLinks.map((social, index) => (
-                      <div key={index}>
-                        <a
-                          href={social.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-mono hover:text-muted-foreground transition-colors"
-                        >
-                          {social.label}
-                        </a>
-                      </div>
-                    ))}
+                  <div>
+                    <input
+                      {...form.register("subject")}
+                      placeholder="What's this about?"
+                      className={inputClass}
+                    />
+                    {errors.subject && (
+                      <p className="mt-1.5 text-xs text-destructive">
+                        {errors.subject.message}
+                      </p>
+                    )}
                   </div>
-                </div>
+                  <div>
+                    <textarea
+                      {...form.register("message")}
+                      rows={5}
+                      placeholder="Tell me more..."
+                      className={cn(inputClass, "resize-none")}
+                    />
+                    {errors.message && (
+                      <p className="mt-1.5 text-xs text-destructive">
+                        {errors.message.message}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    type="submit"
+                    variant="accent"
+                    size="lg"
+                    disabled={submitting}
+                    className="w-full"
+                  >
+                    {submitting ? "Sending..." : "Send it"}
+                    {!submitting && <ArrowUpRight className="h-5 w-5" />}
+                  </Button>
+                </form>
               </Card>
-
-              {/* Response Time */}
-              <Card variant="outlined" padding="lg">
-                <div className="space-y-2">
-                  <Text variant="small" className="text-muted-foreground">
-                    Response Time
-                  </Text>
-                  <Text variant="small">
-                    I typically respond within 24 hours.
-                  </Text>
-                </div>
-              </Card>
-            </div>
-          </Grid>
+            )}
+          </div>
         </div>
       </Container>
     </Section>

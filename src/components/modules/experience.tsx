@@ -1,93 +1,75 @@
-"use client"
-
-import * as React from "react"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
-import { Heading, Text, Caption } from "@/components/ui/typography"
-import { Card } from "@/components/ui/card"
-
-const experiences = [
-  {
-    period: "2022 - Present",
-    role: "Senior Full Stack Developer",
-    company: "TechCorp",
-    description: "Leading development of scalable web applications, mentoring junior developers, and implementing modern development practices.",
-    achievements: [
-      "Increased application performance by 40% through optimization",
-      "Led a team of 5 developers on major product launches",
-      "Implemented CI/CD pipelines reducing deployment time by 60%"
-    ]
-  },
-  {
-    period: "2020 - 2022",
-    role: "Full Stack Developer", 
-    company: "StartupXYZ",
-    description: "Built and maintained full-stack applications using React, Node.js, and cloud technologies.",
-    achievements: [
-      "Developed 15+ client applications from concept to deployment",
-      "Integrated third-party APIs and payment systems",
-      "Collaborated with design team to implement pixel-perfect UIs"
-    ]
-  },
-  {
-    period: "2018 - 2020",
-    role: "Frontend Developer",
-    company: "WebAgency",
-    description: "Created responsive user interfaces and optimized user experiences for various clients.",
-    achievements: [
-      "Built 20+ responsive websites and web applications",
-      "Improved page load times by 50% through optimization",
-      "Worked with clients to understand and implement requirements"
-    ]
-  }
-]
+import { SectionHeading } from "@/components/ui/section-heading"
+import { Text, Caption } from "@/components/ui/typography"
+import { Badge, Dot } from "@/components/ui/badge"
+import { experiences } from "@/data/profile"
 
 export function Experience() {
   return (
-    <Section spacing="lg">
+    <Section spacing="lg" id="experience">
       <Container>
-        <div className="space-y-12">
-          <div className="text-center space-y-4">
-            <Caption>Professional Journey</Caption>
-            <Heading variant="h2">Experience</Heading>
-            <Text variant="body" className="text-muted-foreground max-w-2xl mx-auto">
-              A journey of continuous learning and growth in the world of web development.
-            </Text>
-          </div>
+        <SectionHeading
+          index="03"
+          eyebrow="The road so far"
+          title={
+            <>
+              Where I&apos;ve <span className="accent-underline">built</span>
+            </>
+          }
+          description="Enterprise platforms across media delivery, banking, and HR tech."
+        />
 
-          <div className="space-y-8">
-            {experiences.map((exp, index) => (
-              <Card key={index} variant="outlined" padding="lg">
-                <div className="space-y-4">
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                    <div className="space-y-2">
-                      <Text variant="h6">{exp.role}</Text>
-                      <Text variant="body" className="text-muted-foreground">
-                        {exp.company}
-                      </Text>
-                    </div>
-                    <Caption>{exp.period}</Caption>
+        <div className="mt-12 space-y-4">
+          {experiences.map((exp, index) => (
+            <div
+              key={`${exp.company}-${exp.period}`}
+              className="group relative rounded-3xl border border-border/70 bg-card p-6 soft-sm transition-all duration-300 hover:-translate-y-0.5 hover:soft md:p-8"
+            >
+              <div className="flex flex-col gap-6 md:flex-row md:gap-10">
+                <div className="md:w-64 md:shrink-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-display text-xl font-bold">
+                      {exp.company}
+                    </span>
+                    {index === 0 && (
+                      <Badge tone="lime" className="gap-1.5">
+                        <Dot />
+                        Now
+                      </Badge>
+                    )}
                   </div>
-                  
-                  <Text variant="body" className="text-muted-foreground">
+                  <Caption className="mt-2 block">{exp.period}</Caption>
+                  <Text variant="small" className="mt-1 text-muted-foreground">
+                    {exp.location}
+                  </Text>
+                </div>
+
+                <div className="flex-1">
+                  <Text variant="h5" className="text-accent">
+                    {exp.role}
+                  </Text>
+                  <Text
+                    variant="small"
+                    className="mt-2 text-muted-foreground"
+                  >
                     {exp.description}
                   </Text>
-                  
-                  <div className="space-y-2">
-                    <Text variant="small" className="font-medium">Key Achievements:</Text>
-                    <ul className="space-y-1">
-                      {exp.achievements.map((achievement, achIndex) => (
-                        <li key={achIndex} className="text-sm font-mono text-muted-foreground flex items-start gap-2">
-                          <span className="text-foreground mt-1">•</span>
-                          {achievement}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {exp.achievements.map((a) => (
+                      <li
+                        key={a}
+                        className="flex gap-2 text-sm text-muted-foreground"
+                      >
+                        <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
+                        {a}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </Card>
-            ))}
-          </div>
+              </div>
+            </div>
+          ))}
         </div>
       </Container>
     </Section>

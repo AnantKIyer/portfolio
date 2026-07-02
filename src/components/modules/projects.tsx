@@ -1,110 +1,105 @@
-"use client"
-
-import * as React from "react"
 import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
-import { Heading, Text, Caption } from "@/components/ui/typography"
-import { Grid } from "@/components/ui/grid"
-import { Card, CardHeader, CardContent, CardFooter } from "@/components/ui/card"
-import { Typewriter } from "@/components/ui/typewriter"
+import { SectionHeading } from "@/components/ui/section-heading"
+import { Text } from "@/components/ui/typography"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { projects } from "@/data/projects"
 
-export function Projects() {
-  return (
-    <Section spacing="lg">
-      <Container>
-        <div className="space-y-12">
-          <div className="text-center space-y-4">
-            <Caption>Selected Work</Caption>
-            <Heading variant="h2">
-              <Typewriter 
-                text="Projects & Experiments"
-                speed={100}
-                delay={6000}
-              />
-            </Heading>
-            <Text variant="body" className="text-muted-foreground max-w-2xl mx-auto">
-              <Typewriter 
-                text="A collection of projects showcasing my expertise in modern web development and problem-solving approach."
-                speed={25}
-                delay={8000}
-              />
-            </Text>
-          </div>
+interface ProjectsProps {
+  limit?: number
+  showHeader?: boolean
+}
 
-          <Grid cols={2} gap="lg">
-            {projects.map((project, index) => (
-              <Card key={index} variant="outlined" padding="lg" hover>
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <Text variant="h6">{project.title}</Text>
-                      <Caption>{project.category} • {project.year}</Caption>
-                    </div>
-                    <div className="text-right">
-                      <Text variant="small" className="text-muted-foreground">
-                        {project.status}
-                      </Text>
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                <CardContent>
-                  <Text variant="body" className="text-muted-foreground mb-4">
-                    {project.description}
-                  </Text>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.slice(0, 5).map((tech, techIndex) => (
-                      <span 
-                        key={techIndex}
-                        className="text-xs font-mono px-2 py-1 bg-muted/50 rounded"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {project.technologies.length > 5 && (
-                      <span className="text-xs font-mono px-2 py-1 bg-muted/50 rounded">
-                        +{project.technologies.length - 5} more
-                      </span>
-                    )}
-                  </div>
-                </CardContent>
-                
-                <CardFooter>
-                  <div className="flex gap-4">
-                    <Link 
-                      href={`/projects/${project.id}`}
-                      className="text-sm font-mono border-b border-transparent hover:border-current transition-colors"
+const categoryTone: Record<string, "violet" | "sky" | "amber" | "coral"> = {
+  "Full Stack": "violet",
+  Frontend: "sky",
+  Backend: "amber",
+  Mobile: "coral",
+}
+
+export function Projects({ limit, showHeader = true }: ProjectsProps) {
+  const items = limit ? projects.slice(0, limit) : projects
+
+  return (
+    <Section spacing="lg" id="work">
+      <Container>
+        {showHeader && (
+          <SectionHeading
+            index="02"
+            eyebrow="Selected work"
+            title={
+              <>
+                Things I&apos;ve <span className="accent-underline">shipped</span>
+              </>
+            }
+            description="A mix of production platforms and side experiments — click any to dig in."
+            action={
+              limit ? (
+                <Button variant="soft" asChild>
+                  <Link href="/projects">
+                    View all work
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              ) : undefined
+            }
+          />
+        )}
+
+        <div className="mt-12 border-t border-border">
+          {items.map((project, index) => (
+            <Link
+              key={project.id}
+              href={`/projects/${project.id}`}
+              className="group relative flex flex-col gap-4 rounded-2xl border-b border-border px-4 py-8 transition-colors hover:bg-muted/50 md:flex-row md:items-center md:gap-8"
+            >
+              <span className="font-mono text-sm text-muted-foreground md:w-12">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+
+              <div className="flex-1">
+                <div className="flex flex-wrap items-center gap-3">
+                  <h3 className="font-display text-2xl font-bold tracking-tight transition-transform duration-300 group-hover:translate-x-2 md:text-4xl">
+                    {project.title}
+                  </h3>
+                  <Badge tone={categoryTone[project.category] ?? "default"}>
+                    {project.category}
+                  </Badge>
+                  {project.status === "In Progress" && (
+                    <Badge tone="outline">In progress</Badge>
+                  )}
+                </div>
+                <Text
+                  variant="small"
+                  className="mt-2 max-w-2xl text-muted-foreground"
+                >
+                  {project.description}
+                </Text>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {project.technologies.slice(0, 5).map((tech) => (
+                    <span
+                      key={tech}
+                      className="font-mono text-[11px] text-muted-foreground"
                     >
-                      View Details
-                    </Link>
-                    {project.liveUrl && (
-                      <a 
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-mono border-b border-transparent hover:border-current transition-colors"
-                      >
-                        Live Demo
-                      </a>
-                    )}
-                    {project.githubUrl && (
-                      <a 
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm font-mono border-b border-transparent hover:border-current transition-colors"
-                      >
-                        Source Code
-                      </a>
-                    )}
-                  </div>
-                </CardFooter>
-              </Card>
-            ))}
-          </Grid>
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 md:w-auto">
+                <span className="font-mono text-sm text-muted-foreground">
+                  &apos;{String(project.year).slice(2)}
+                </span>
+                <span className="flex h-12 w-12 items-center justify-center rounded-full border border-border text-muted-foreground transition-all duration-300 group-hover:border-transparent group-hover:bg-accent group-hover:text-accent-foreground">
+                  <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
+              </div>
+            </Link>
+          ))}
         </div>
       </Container>
     </Section>

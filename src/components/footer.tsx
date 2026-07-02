@@ -1,84 +1,115 @@
 "use client"
 
-import * as React from "react"
 import Link from "next/link"
+import { ArrowUpRight, Download, Github, Linkedin, Mail } from "lucide-react"
 import { Container } from "@/components/ui/container"
-import { Section } from "@/components/ui/section"
+import { Marquee } from "@/components/ui/marquee"
 import { Text, Caption } from "@/components/ui/typography"
-import { Grid } from "@/components/ui/grid"
+import { CopyButton } from "@/components/ui/copy-button"
+import { profile } from "@/data/profile"
 
-const quickLinks = [
+const links = [
   { name: "Home", href: "/" },
+  { name: "Work", href: "/projects" },
   { name: "About", href: "/about" },
-  { name: "Projects", href: "/projects" },
   { name: "Contact", href: "/contact" },
 ]
 
-const socialLinks = [
-  { name: "GitHub", href: "https://github.com/AnantKIyer" },
-  { name: "LinkedIn", href: "https://linkedin.com/in/anant-iyer" },
-  { name: "Twitter", href: "https://twitter.com/" },
+const socials = [
+  { name: "GitHub", href: profile.links.github, icon: Github },
+  { name: "LinkedIn", href: profile.links.linkedin, icon: Linkedin },
+  { name: "Email", href: `mailto:${profile.email}`, icon: Mail },
 ]
 
 export function Footer() {
   return (
-    <footer className="border-t border-border">
-      <Section spacing="md">
-        <Container>
-          <Grid cols={3} gap="lg">
-            {/* Brand */}
-            <div className="space-y-4">
-              <Text variant="h6">Anant Kumar Iyer</Text>
-              <Text variant="small" className="text-muted-foreground">
-                Full Stack Developer crafting digital experiences with modern technologies.
-              </Text>
-            </div>
-
-            {/* Quick Links */}
-            <div className="space-y-4">
-              <Caption>Links</Caption>
-              <div className="space-y-2">
-                {quickLinks.map((link) => (
-                  <div key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.name}
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Social */}
-            <div className="space-y-4">
-              <Caption>Social</Caption>
-              <div className="space-y-2">
-                {socialLinks.map((link) => (
-                  <div key={link.name}>
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.name}
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Grid>
-
-          {/* Bottom */}
-          <div className="mt-12 pt-8 border-t border-border text-center">
-            <Text variant="small" className="text-muted-foreground">
-              &copy; {new Date().getFullYear()} Anant Kumar Iyer. All rights reserved.
-            </Text>
+    <footer className="relative mt-16 overflow-hidden border-t border-border bg-secondary/40">
+      <div className="border-b border-border/70 py-5">
+        <Marquee className="[--gap:2rem]">
+          <div className="flex items-center gap-8 pr-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span
+                key={i}
+                className="flex items-center gap-8 font-display text-2xl font-semibold text-muted-foreground/70 md:text-4xl"
+              >
+                Let&apos;s build something
+                <span className="text-accent">✦</span>
+              </span>
+            ))}
           </div>
-        </Container>
-      </Section>
+        </Marquee>
+      </div>
+
+      <Container className="py-14">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
+          <div className="space-y-5">
+            <Link
+              href={`mailto:${profile.email}`}
+              className="inline-flex items-center gap-2 font-display text-2xl font-semibold hover:text-accent md:text-3xl"
+            >
+              {profile.email}
+              <ArrowUpRight className="h-6 w-6" />
+            </Link>
+            <Text variant="small" className="max-w-sm text-muted-foreground">
+              {profile.footerBio}
+            </Text>
+            <div className="flex flex-wrap gap-2">
+              <CopyButton value={profile.email} label="Copy email" />
+              <a
+                href={profile.resumeUrl}
+                download
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-muted/60"
+              >
+                Résumé
+                <Download className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Caption>Sitemap</Caption>
+            <div className="flex flex-col gap-2">
+              {links.map((l) => (
+                <Link
+                  key={l.name}
+                  href={l.href}
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {l.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Caption>Elsewhere</Caption>
+            <div className="flex flex-col gap-2">
+              {socials.map((s) => (
+                <a
+                  key={s.name}
+                  href={s.href}
+                  target={s.href.startsWith("http") ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className="group inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <s.icon className="h-4 w-4" />
+                  {s.name}
+                  <ArrowUpRight className="h-3.5 w-3.5 opacity-0 transition-opacity group-hover:opacity-100" />
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-14 flex flex-col items-start justify-between gap-2 border-t border-border/70 pt-6 sm:flex-row sm:items-center">
+          <Text variant="small" className="text-muted-foreground">
+            © {new Date().getFullYear()} {profile.name}. Built with Next.js &amp; Tailwind.
+          </Text>
+          <Text variant="small" className="text-muted-foreground">
+            {profile.location}
+          </Text>
+        </div>
+      </Container>
     </footer>
   )
 }

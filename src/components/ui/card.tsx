@@ -4,74 +4,74 @@ import { cn } from "@/lib/utils"
 interface CardProps {
   children: React.ReactNode
   className?: string
-  variant?: "default" | "outlined" | "elevated" | "minimal"
+  variant?: "soft" | "elevated" | "outline" | "ghost" | "solid"
   padding?: "none" | "sm" | "md" | "lg"
   hover?: boolean
 }
 
 const variantClasses = {
-  default: "bg-background",
-  outlined: "border border-border bg-background",
-  elevated: "bg-background shadow-sm",
-  minimal: "bg-transparent"
+  soft: "bg-card border border-border/70 soft-sm",
+  elevated: "bg-card border border-border/40 soft",
+  outline: "bg-transparent border border-border",
+  ghost: "bg-muted/50",
+  solid: "bg-ink text-background",
 }
 
 const paddingClasses = {
   none: "",
   sm: "p-4",
   md: "p-6",
-  lg: "p-8"
+  lg: "p-8 md:p-10",
 }
 
-export function Card({ 
-  children, 
-  className, 
-  variant = "outlined",
+export function Card({
+  children,
+  className,
+  variant = "soft",
   padding = "md",
-  hover = false
+  hover = false,
 }: CardProps) {
   return (
-    <div className={cn(
-      "transition-all duration-200",
-      variantClasses[variant],
-      paddingClasses[padding],
-      hover && "hover:bg-muted/50 cursor-pointer",
-      className
-    )}>
+    <div
+      className={cn(
+        "rounded-3xl transition-all duration-300 ease-out",
+        variantClasses[variant],
+        paddingClasses[padding],
+        hover && "hover:-translate-y-1 hover:soft-lg",
+        className,
+      )}
+    >
       {children}
     </div>
   )
 }
 
-export function CardHeader({ 
-  children, 
-  className 
-}: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={cn("mb-4", className)}>
-      {children}
-    </div>
-  )
+export function CardHeader({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return <div className={cn("mb-4", className)}>{children}</div>
 }
 
-export function CardContent({ 
-  children, 
-  className 
-}: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={cn("", className)}>
-      {children}
-    </div>
-  )
+export function CardContent({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return <div className={cn(className)}>{children}</div>
 }
 
-export function CardFooter({ 
-  children, 
-  className 
-}: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={cn("mt-4", className)}>
-      {children}
-    </div>
-  )
+export function CardFooter({
+  children,
+  className,
+}: {
+  children: React.ReactNode
+  className?: string
+}) {
+  return <div className={cn("mt-4", className)}>{children}</div>
 }
