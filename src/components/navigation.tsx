@@ -4,6 +4,8 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Download, Menu, X } from "lucide-react"
+import { useQuery } from "convex/react"
+import { api } from "convex/_generated/api"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -12,12 +14,16 @@ import { profile } from "@/data/profile"
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Work", href: "/projects" },
+  { name: "Blog", href: "/blog" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
 ]
 
 export function Navigation() {
   const pathname = usePathname()
+  const liveProfile = useQuery(api.siteProfile.get)
+  const resumeUrl = liveProfile?.resumeUrl ?? profile.resumeUrl
+  const email = liveProfile?.email ?? profile.email
   const [open, setOpen] = React.useState(false)
   const [scrolled, setScrolled] = React.useState(false)
 
@@ -31,6 +37,10 @@ export function Navigation() {
     window.addEventListener("scroll", onScroll, { passive: true })
     return () => window.removeEventListener("scroll", onScroll)
   }, [])
+
+  if (pathname.startsWith("/admin")) {
+    return null
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-[100] px-4 pt-4">
@@ -79,13 +89,13 @@ export function Navigation() {
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Button variant="soft" size="sm" asChild className="hidden sm:inline-flex">
-            <a href={profile.resumeUrl} download>
+            <a href={resumeUrl} download>
               <Download className="h-4 w-4" />
               Résumé
             </a>
           </Button>
           <Button variant="accent" size="sm" asChild className="hidden sm:inline-flex">
-            <a href={`mailto:${profile.email}`}>Let&apos;s talk</a>
+            <a href={`mailto:${email}`}>Let&apos;s talk</a>
           </Button>
           <button
             type="button"
@@ -121,13 +131,13 @@ export function Navigation() {
           })}
           <div className="mt-2 grid grid-cols-2 gap-2">
             <Button variant="soft" asChild>
-              <a href={profile.resumeUrl} download>
+              <a href={resumeUrl} download>
                 <Download className="h-4 w-4" />
                 Résumé
               </a>
             </Button>
             <Button variant="accent" asChild>
-              <a href={`mailto:${profile.email}`}>Let&apos;s talk</a>
+              <a href={`mailto:${email}`}>Let&apos;s talk</a>
             </Button>
           </div>
         </div>

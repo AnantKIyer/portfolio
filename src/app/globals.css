@@ -111,13 +111,99 @@
       0 24px 56px -16px hsl(24 12% 10% / 0.16);
   }
 
-  /* Dotted background */
-  .dots {
+  /* Site-wide layered textures */
+  .texture-grid {
+    opacity: 0.55;
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.045) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse 90% 80% at 50% 35%, #000 15%, transparent 72%);
+  }
+
+  .texture-checker {
+    opacity: 0.35;
+    background-image:
+      linear-gradient(
+        45deg,
+        hsl(var(--foreground) / 0.035) 25%,
+        transparent 25%,
+        transparent 75%,
+        hsl(var(--foreground) / 0.035) 75%
+      ),
+      linear-gradient(
+        45deg,
+        hsl(var(--foreground) / 0.035) 25%,
+        transparent 25%,
+        transparent 75%,
+        hsl(var(--foreground) / 0.035) 75%
+      );
+    background-size: 20px 20px;
+    background-position:
+      0 0,
+      10px 10px;
+    mask-image: radial-gradient(ellipse 85% 75% at 50% 40%, #000 10%, transparent 70%);
+  }
+
+  .texture-nodes {
+    opacity: 0.65;
     background-image: radial-gradient(
-      hsl(var(--muted-foreground) / 0.18) 1px,
-      transparent 1px
+      hsl(var(--accent) / 0.22) 1.5px,
+      transparent 1.5px
     );
-    background-size: 22px 22px;
+    background-size: 40px 40px;
+    background-position: 20px 20px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, #000 5%, transparent 65%);
+  }
+
+  .texture-vignette {
+    background: radial-gradient(
+      ellipse 120% 90% at 50% 40%,
+      transparent 40%,
+      hsl(var(--background) / 0.35) 100%
+    );
+  }
+
+  .dark .texture-grid {
+    opacity: 0.4;
+    background-image:
+      linear-gradient(hsl(var(--foreground) / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--foreground) / 0.06) 1px, transparent 1px);
+  }
+
+  .dark .texture-checker {
+    opacity: 0.25;
+    background-image:
+      linear-gradient(
+        45deg,
+        hsl(var(--foreground) / 0.04) 25%,
+        transparent 25%,
+        transparent 75%,
+        hsl(var(--foreground) / 0.04) 75%
+      ),
+      linear-gradient(
+        45deg,
+        hsl(var(--foreground) / 0.04) 25%,
+        transparent 25%,
+        transparent 75%,
+        hsl(var(--foreground) / 0.04) 75%
+      );
+  }
+
+  .dark .texture-nodes {
+    opacity: 0.5;
+    background-image: radial-gradient(
+      hsl(var(--accent) / 0.28) 1.5px,
+      transparent 1.5px
+    );
+  }
+
+  .dark .texture-vignette {
+    background: radial-gradient(
+      ellipse 120% 90% at 50% 40%,
+      transparent 35%,
+      hsl(var(--background) / 0.55) 100%
+    );
   }
 
   .accent-underline {
@@ -210,6 +296,22 @@
 *:focus-visible {
   outline: 2px solid hsl(var(--accent));
   outline-offset: 2px;
+}
+
+.admin-input,
+.admin-textarea {
+  @apply w-full rounded-xl border border-border/80 bg-background px-3.5 py-2.5 text-sm transition-colors;
+  @apply placeholder:text-muted-foreground/50;
+  @apply focus:border-accent/40 focus:bg-card focus:outline-none focus:ring-2 focus:ring-accent/15;
+}
+
+.admin-textarea {
+  @apply min-h-[100px] resize-y leading-relaxed;
+}
+
+.admin-select {
+  @apply cursor-pointer appearance-none bg-[length:1rem] bg-[right_0.75rem_center] bg-no-repeat pr-9;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
 }
 
 @media (prefers-reduced-motion: reduce) {

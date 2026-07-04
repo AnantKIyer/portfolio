@@ -1,10 +1,14 @@
+"use client"
+
 import { Code2, Layers, Wrench } from "lucide-react"
+import { useQuery } from "convex/react"
+import { api } from "convex/_generated/api"
+import { skillCategories as fallbackSkills } from "@/data/profile"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { SectionHeading } from "@/components/ui/section-heading"
 import { Text } from "@/components/ui/typography"
 import { Card } from "@/components/ui/card"
-import { skillCategories } from "@/data/profile"
 
 const categoryConfig = [
   {
@@ -28,6 +32,9 @@ const categoryConfig = [
 ]
 
 export function Skills() {
+  const liveSkills = useQuery(api.skills.list)
+  const skillCategories = liveSkills ?? fallbackSkills
+
   return (
     <Section spacing="lg" id="skills">
       <Container>

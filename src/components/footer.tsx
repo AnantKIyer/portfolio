@@ -1,7 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { ArrowUpRight, Download, Github, Linkedin, Mail } from "lucide-react"
+import { useQuery } from "convex/react"
+import { api } from "convex/_generated/api"
 import { Container } from "@/components/ui/container"
 import { Marquee } from "@/components/ui/marquee"
 import { Text, Caption } from "@/components/ui/typography"
@@ -11,17 +14,29 @@ import { profile } from "@/data/profile"
 const links = [
   { name: "Home", href: "/" },
   { name: "Work", href: "/projects" },
+  { name: "Blog", href: "/blog" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
 ]
 
-const socials = [
-  { name: "GitHub", href: profile.links.github, icon: Github },
-  { name: "LinkedIn", href: profile.links.linkedin, icon: Linkedin },
-  { name: "Email", href: `mailto:${profile.email}`, icon: Mail },
+const socials = (github: string, linkedin: string, email: string) => [
+  { name: "GitHub", href: github, icon: Github },
+  { name: "LinkedIn", href: linkedin, icon: Linkedin },
+  { name: "Email", href: `mailto:${email}`, icon: Mail },
 ]
 
 export function Footer() {
+  const pathname = usePathname()
+  const liveProfile = useQuery(api.siteProfile.get)
+  const resumeUrl = liveProfile?.resumeUrl ?? profile.resumeUrl
+  const email = liveProfile?.email ?? profile.email
+  const footerBio = liveProfile?.footerBio ?? profile.footerBio
+  const github = liveProfile?.links.github ?? profile.links.github
+  const linkedin = liveProfile?.links.linkedin ?? profile.links.linkedin
+  if (pathname.startsWith("/admin")) {
+    return null
+  }
+
   return (
     <footer className="relative mt-16 overflow-hidden border-t border-border bg-secondary/40">
       <div className="border-b border-border/70 py-5">
@@ -44,19 +59,19 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
           <div className="space-y-5">
             <Link
-              href={`mailto:${profile.email}`}
+              href={`mailto:${email}`}
               className="inline-flex items-center gap-2 font-display text-2xl font-semibold hover:text-accent md:text-3xl"
             >
-              {profile.email}
+              {email}
               <ArrowUpRight className="h-6 w-6" />
             </Link>
             <Text variant="small" className="max-w-sm text-muted-foreground">
-              {profile.footerBio}
+              {footerBio}
             </Text>
             <div className="flex flex-wrap gap-2">
-              <CopyButton value={profile.email} label="Copy email" />
+              <CopyButton value={email} label="Copy email" />
               <a
-                href={profile.resumeUrl}
+                href={resumeUrl}
                 download
                 className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-muted/60"
               >
@@ -84,7 +99,7 @@ export function Footer() {
           <div className="space-y-3">
             <Caption>Elsewhere</Caption>
             <div className="flex flex-col gap-2">
-              {socials.map((s) => (
+              {socials(github, linkedin, email).map((s) => (
                 <a
                   key={s.name}
                   href={s.href}

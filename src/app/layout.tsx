@@ -6,6 +6,8 @@ import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { StructuredData } from "@/components/structured-data"
 import { MotionProvider } from "@/components/motion/motion-provider"
+import { ConvexClientProvider } from "@/components/convex/convex-provider"
+import { SiteBackground } from "@/components/site-background"
 import { profile } from "@/data/profile"
 
 const inter = Inter({
@@ -84,11 +86,14 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <MotionProvider>
-            <div className="relative flex min-h-screen flex-col">
-              <Navigation />
-              <main className="flex-1">{children}</main>
-              <Footer />
-            </div>
+            <ConvexClientProvider>
+              <SiteBackground />
+              <div className="relative flex min-h-screen flex-col">
+                <Navigation />
+                <main className="flex-1">{children}</main>
+                <Footer />
+              </div>
+            </ConvexClientProvider>
           </MotionProvider>
         </ThemeProvider>
       </body>

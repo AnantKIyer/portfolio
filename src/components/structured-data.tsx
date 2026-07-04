@@ -9,7 +9,7 @@ export function StructuredData() {
     jobTitle: profile.title,
     description: profile.tagline,
     url: "https://anantkiyer.github.io",
-    image: "https://anantkiyer.github.io/api/placeholder/400/400",
+    image: "https://anantkiyer.github.io/portrait.jpg",
     sameAs: [profile.links.github, profile.links.linkedin],
     knowsAbout: skillCategories.flatMap((category) => category.skills),
     alumniOf: {

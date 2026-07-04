@@ -1,12 +1,17 @@
+"use client"
+
 import Link from "next/link"
+import { useQuery } from "convex/react"
 import { ArrowUpRight } from "lucide-react"
+import { api } from "convex/_generated/api"
+import { projects as fallbackProjects } from "@/data/projects"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { SectionHeading } from "@/components/ui/section-heading"
 import { Text } from "@/components/ui/typography"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { projects } from "@/data/projects"
+import { ProjectReactions } from "@/components/modules/project-reactions"
 
 interface ProjectsProps {
   limit?: number
@@ -21,7 +26,9 @@ const categoryTone: Record<string, "violet" | "sky" | "amber" | "coral"> = {
 }
 
 export function Projects({ limit, showHeader = true }: ProjectsProps) {
-  const items = limit ? projects.slice(0, limit) : projects
+  const liveProjects = useQuery(api.projects.list)
+  const allItems = liveProjects ?? fallbackProjects
+  const items = limit ? allItems.slice(0, limit) : allItems
 
   return (
     <Section spacing="lg" id="work">
@@ -71,19 +78,14 @@ export function Projects({ limit, showHeader = true }: ProjectsProps) {
                   {project.status === "In Progress" && (
                     <Badge tone="outline">In progress</Badge>
                   )}
+                  <ProjectReactions projectSlug={project.id} />
                 </div>
-                <Text
-                  variant="small"
-                  className="mt-2 max-w-2xl text-muted-foreground"
-                >
+                <Text variant="small" className="mt-2 max-w-2xl text-muted-foreground">
                   {project.description}
                 </Text>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {project.technologies.slice(0, 5).map((tech) => (
-                    <span
-                      key={tech}
-                      className="font-mono text-[11px] text-muted-foreground"
-                    >
+                    <span key={tech} className="font-mono text-[11px] text-muted-foreground">
                       {tech}
                     </span>
                   ))}
