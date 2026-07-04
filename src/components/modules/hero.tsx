@@ -1,45 +1,50 @@
 "use client"
 
-import Image from "next/image"
 import Link from "next/link"
-import { ArrowDownRight, Download, Github } from "lucide-react"
+import { useQuery } from "convex/react"
+import { ArrowDownRight, Github } from "lucide-react"
+import { api } from "convex/_generated/api"
+import { profile as fallbackProfile, skillCategories as fallbackSkills } from "@/data/profile"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { Text, Caption } from "@/components/ui/typography"
 import { Button } from "@/components/ui/button"
-import { Badge, Dot } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge"
 import { Marquee } from "@/components/ui/marquee"
 import { RotatingWord } from "@/components/ui/rotating-word"
 import { CopyButton } from "@/components/ui/copy-button"
-import { profile, skillCategories } from "@/data/profile"
+import { ProfilePortrait } from "@/components/ui/profile-portrait"
+import {
+  LiveAvailabilityBadge,
+  LiveBuildingNote,
+} from "@/components/modules/live-status"
+import { ResumeDownloadButton } from "@/components/modules/resume-link"
 
 const roles = ["scalable platforms", "AI-native UIs", "design systems", "transfer engines"]
 
-const stats = [
-  { value: profile.stats.experience, label: "Building for the web" },
-  { value: profile.stats.companies, label: "Companies shipped for" },
-  { value: profile.stats.technologies, label: "Tools in the belt" },
-]
-
-const marqueeTech = skillCategories.flatMap((c) => c.skills)
-
 export function Hero() {
+  const liveProfile = useQuery(api.siteProfile.get)
+  const skills = useQuery(api.skills.list)
+
+  const profile = liveProfile ?? fallbackProfile
+  const marqueeTech = (skills ?? fallbackSkills).flatMap((c) => c.skills)
+
+  const stats = [
+    { value: profile.stats.experience, label: "Building for the web" },
+    { value: profile.stats.companies, label: "Companies shipped for" },
+    { value: profile.stats.technologies, label: "Tools in the belt" },
+  ]
+
   return (
     <Section spacing="none" className="relative overflow-hidden pt-28 md:pt-36">
-      {/* soft ambient background */}
-      <div className="pointer-events-none absolute inset-0 -z-10 dots opacity-50" />
       <div className="pointer-events-none absolute -right-40 -top-24 -z-10 h-[34rem] w-[34rem] rounded-full bg-accent/10 blur-[130px]" />
       <div className="pointer-events-none absolute -left-40 top-48 -z-10 h-[28rem] w-[28rem] rounded-full bg-sky/8 blur-[130px]" />
 
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-8">
-          {/* Left column — headline */}
           <div className="lg:col-span-8">
             <div className="flex flex-wrap items-center gap-3">
-              <Badge tone="outline" className="py-1.5">
-                <Dot className="text-lime" />
-                Available for new work
-              </Badge>
+              <LiveAvailabilityBadge />
               <Badge tone="default" className="py-1.5 text-muted-foreground">
                 {profile.location}
               </Badge>
@@ -66,32 +71,23 @@ export function Hero() {
                   <ArrowDownRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
                 </Link>
               </Button>
-              <Button variant="soft" size="lg" asChild>
-                <a href={profile.resumeUrl} download>
-                  Download résumé
-                  <Download className="h-5 w-5" />
-                </a>
-              </Button>
+              <ResumeDownloadButton
+                href={profile.resumeUrl}
+                className="inline-flex h-14 items-center justify-center gap-2 rounded-full border border-border bg-card px-8 text-base font-medium soft-sm transition-colors hover:bg-muted/60"
+                label="Download résumé"
+              />
               <CopyButton value={profile.email} label="Copy email" className="h-14 px-6" />
             </div>
           </div>
 
-          {/* Right column — profile / signature card */}
           <div className="lg:col-span-4">
             <div className="group relative h-full rounded-[2rem] border border-border/70 bg-card p-7 soft transition-all duration-300 hover:soft-lg">
               <span className="wobble absolute -right-3 -top-3 z-10 flex h-14 w-14 items-center justify-center rounded-2xl border border-border bg-card text-2xl soft-sm">
                 👋
               </span>
 
-              <div className="relative mb-6 overflow-hidden rounded-2xl bg-gradient-to-b from-accent/15 to-secondary/40">
-                <Image
-                  src="/avatar.png"
-                  alt={profile.name}
-                  width={480}
-                  height={480}
-                  priority
-                  className="mx-auto h-48 w-auto translate-y-1 object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.04]"
-                />
+              <div className="mb-6 flex justify-center pt-2">
+                <ProfilePortrait size="lg" className="transition-transform duration-500 group-hover:scale-[1.03]" />
               </div>
 
               <Caption>Currently</Caption>
@@ -99,7 +95,7 @@ export function Hero() {
                 {profile.title}
               </Text>
               <Text variant="small" className="mt-1 text-muted-foreground">
-                @ Brahma AI · Bangalore
+                <LiveBuildingNote fallback="@ Brahma AI · Bangalore" />
               </Text>
 
               <div className="my-6 h-px w-full bg-border" />
@@ -132,7 +128,6 @@ export function Hero() {
         </div>
       </Container>
 
-      {/* Tech marquee band — soft, bordered */}
       <div className="mt-20 border-y border-border bg-secondary/30 py-4 md:mt-28">
         <Marquee speed="slow">
           <div className="flex items-center gap-6 pr-6">

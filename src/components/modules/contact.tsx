@@ -3,6 +3,7 @@
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMutation, useQuery } from "convex/react"
 import * as z from "zod"
 import { ArrowUpRight, CheckCircle2, Download, Mail, MapPin, Phone } from "lucide-react"
 import { Container } from "@/components/ui/container"
@@ -12,7 +13,9 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge, Dot } from "@/components/ui/badge"
 import { CopyButton } from "@/components/ui/copy-button"
-import { profile } from "@/data/profile"
+import { ResumeDownloadButton } from "@/components/modules/resume-link"
+import { api } from "convex/_generated/api"
+import { profile as fallbackProfile } from "@/data/profile"
 import { cn } from "@/lib/utils"
 
 const schema = z.object({
@@ -27,19 +30,23 @@ type FormValues = z.infer<typeof schema>
 const inputClass =
   "w-full rounded-2xl bg-muted/60 border border-border px-4 py-3.5 text-sm transition-colors focus:outline-none focus:border-accent focus:bg-card placeholder:text-muted-foreground/70"
 
-const directLinks = [
-  { icon: Mail, label: profile.email, href: `mailto:${profile.email}` },
-  {
-    icon: Phone,
-    label: profile.phone,
-    href: `tel:${profile.phone.replace(/\s/g, "")}`,
-  },
-  { icon: MapPin, label: profile.location, href: undefined },
-]
-
 export function Contact() {
+  const liveProfile = useQuery(api.siteProfile.get)
+  const profile = liveProfile ?? fallbackProfile
+
+  const directLinks = [
+    { icon: Mail, label: profile.email, href: `mailto:${profile.email}` },
+    {
+      icon: Phone,
+      label: profile.phone,
+      href: `tel:${profile.phone.replace(/\s/g, "")}`,
+    },
+    { icon: MapPin, label: profile.location, href: undefined },
+  ]
+  const submitMessage = useMutation(api.contact.submit)
   const [submitting, setSubmitting] = React.useState(false)
   const [sent, setSent] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", email: "", subject: "", message: "" },
@@ -47,12 +54,17 @@ export function Contact() {
 
   async function onSubmit(data: FormValues) {
     setSubmitting(true)
-    await new Promise((r) => setTimeout(r, 900))
-    console.log(data)
-    setSent(true)
-    setSubmitting(false)
-    form.reset()
-    setTimeout(() => setSent(false), 5000)
+    setError(null)
+    try {
+      await submitMessage(data)
+      setSent(true)
+      form.reset()
+      setTimeout(() => setSent(false), 5000)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send message")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const errors = form.formState.errors
@@ -207,6 +219,9 @@ export function Contact() {
                     {submitting ? "Sending..." : "Send it"}
                     {!submitting && <ArrowUpRight className="h-5 w-5" />}
                   </Button>
+                  {error && (
+                    <p className="text-sm text-destructive">{error}</p>
+                  )}
                 </form>
               </Card>
             )}

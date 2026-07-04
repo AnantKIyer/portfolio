@@ -13,13 +13,14 @@ import { Heading, Text, Caption } from "@/components/ui/typography"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Project } from "@/data/projects"
+import { ProjectReactions } from "@/components/modules/project-reactions"
+import { PortfolioProject } from "@/types/portfolio"
 
 interface ProjectDetailProps {
-  project: Project
+  project: PortfolioProject | import("@/data/projects").Project
 }
 
-const meta = (project: Project) => [
+const meta = (project: ProjectDetailProps["project"]) => [
   { label: "Duration", value: project.duration },
   { label: "Team", value: `${project.teamSize} people` },
   { label: "Role", value: project.role },
@@ -42,6 +43,7 @@ export function ProjectDetail({ project }: ProjectDetailProps) {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Badge tone="accent">{project.category}</Badge>
             <Badge tone="outline">{project.status}</Badge>
+            <ProjectReactions projectSlug={project.id} />
           </div>
 
           <Heading variant="display" className="mt-6 text-[clamp(2.5rem,7vw,5.5rem)]">

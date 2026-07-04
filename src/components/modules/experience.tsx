@@ -1,11 +1,18 @@
+"use client"
+
+import { useQuery } from "convex/react"
+import { api } from "convex/_generated/api"
+import { experiences as fallbackExperiences } from "@/data/profile"
 import { Container } from "@/components/ui/container"
 import { Section } from "@/components/ui/section"
 import { SectionHeading } from "@/components/ui/section-heading"
 import { Text, Caption } from "@/components/ui/typography"
 import { Badge, Dot } from "@/components/ui/badge"
-import { experiences } from "@/data/profile"
 
 export function Experience() {
+  const liveExperiences = useQuery(api.experiences.list)
+  const experiences = liveExperiences ?? fallbackExperiences
+
   return (
     <Section spacing="lg" id="experience">
       <Container>
@@ -32,12 +39,17 @@ export function Experience() {
                     <span className="font-display text-xl font-bold">
                       {exp.company}
                     </span>
-                    {index === 0 && (
+                    {"isCurrent" in exp && exp.isCurrent ? (
                       <Badge tone="lime" className="gap-1.5">
                         <Dot />
                         Now
                       </Badge>
-                    )}
+                    ) : index === 0 ? (
+                      <Badge tone="lime" className="gap-1.5">
+                        <Dot />
+                        Now
+                      </Badge>
+                    ) : null}
                   </div>
                   <Caption className="mt-2 block">{exp.period}</Caption>
                   <Text variant="small" className="mt-1 text-muted-foreground">
@@ -49,10 +61,7 @@ export function Experience() {
                   <Text variant="h5" className="text-accent">
                     {exp.role}
                   </Text>
-                  <Text
-                    variant="small"
-                    className="mt-2 text-muted-foreground"
-                  >
+                  <Text variant="small" className="mt-2 text-muted-foreground">
                     {exp.description}
                   </Text>
                   <ul className="mt-4 grid gap-2 sm:grid-cols-2">
